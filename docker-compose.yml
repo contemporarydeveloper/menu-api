@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  mongo:
+    image: amd64/mongo:4.2-rc
+    ports:
+      - 27017:27017
+    volumes:
+      - ./.mongo-data:/data/db
+  api:
+    image: maven:3.8.2-eclipse-temurin-16
+    command: mvn spring-boot:run
+    working_dir: /usr/src/app
+    depends_on:
+      - mongo
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/usr/src/app
+      - ./.maven-dependencies:/root/.m2
