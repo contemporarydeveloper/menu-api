@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.when;
@@ -54,6 +56,40 @@ public class MenuControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(menu, response.getBody());
+    }
+
+    @Test
+    @DisplayName("Unsuccessful create menu - null menu response from service")
+    void createMenuNullMenu() {
+        when(menuService.createMenu(menu)).thenReturn(null);
+
+        ResponseEntity response = menuController.createMenu(menu);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNull(response.getHeaders().getLocation());
+    }
+
+    @Test
+    @DisplayName("Unsuccessful create menu - empty menu response from service")
+    void createMenuEmptyMenu() {
+        menu.setId("");
+        when(menuService.createMenu(menu)).thenReturn(menu);
+
+        ResponseEntity response = menuController.createMenu(menu);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertNull(response.getHeaders().getLocation());
+    }
+
+    @Test
+    @DisplayName("Successful create menu")
+    void createMenuSuccessful() {
+        when(menuService.createMenu(menu)).thenReturn(menu);
+
+        ResponseEntity response = menuController.createMenu(menu);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(URI.create("/menus/1234"), response.getHeaders().getLocation());
     }
 
     private Menu generateMenu() {
