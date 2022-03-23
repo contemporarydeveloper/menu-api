@@ -114,6 +114,26 @@ public class MenuControllerTest {
         assertEquals(menu, response.getBody());
     }
 
+    @Test
+    @DisplayName("Unsuccessful delete menu - not found")
+    void deleteMenuNotFound() {
+        when(menuService.deleteMenuById(MENU_ID)).thenReturn(false);
+
+        ResponseEntity response = menuController.deleteMenu(MENU_ID);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Successful delete menu")
+    void deleteMenuSuccessful() {
+        when(menuService.deleteMenuById(MENU_ID)).thenReturn(true);
+
+        ResponseEntity response = menuController.deleteMenu(MENU_ID);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
     private Menu generateMenu() {
         Menu menu = new Menu();
         menu.setId(MENU_ID);
