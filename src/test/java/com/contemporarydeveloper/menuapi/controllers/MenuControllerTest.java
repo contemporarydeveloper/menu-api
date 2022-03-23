@@ -92,6 +92,28 @@ public class MenuControllerTest {
         assertEquals(URI.create("/menus/1234"), response.getHeaders().getLocation());
     }
 
+    @Test
+    @DisplayName("Unsuccessful update menu - not found")
+    void updateMenuNotFound() {
+        when(menuService.updateMenuById(MENU_ID, menu)).thenReturn(null);
+
+        ResponseEntity response = menuController.updateMenu(MENU_ID, menu);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertNull(response.getBody());
+    }
+
+    @Test
+    @DisplayName("Successful update menu")
+    void updateMenuSuccessful() {
+        when(menuService.updateMenuById(MENU_ID, menu)).thenReturn(menu);
+
+        ResponseEntity response = menuController.updateMenu(MENU_ID, menu);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(menu, response.getBody());
+    }
+
     private Menu generateMenu() {
         Menu menu = new Menu();
         menu.setId(MENU_ID);
